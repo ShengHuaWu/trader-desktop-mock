@@ -1,9 +1,9 @@
 import express from 'express';
 
-let router = express.Router();
+const router = express.Router();
 
 router.get('/symbols/fuzzyquery', (req, res) => {
-  res.writeHeader(200, {'Content-Type' : 'application/json'});
+  res.writeHeader(200, {'Content-Type' : 'application/json'}); // TODO: Use middleware to handle headers.
   if (req.query.symbol === 'cu') {
     let json = JSON.stringify(['cu1611', 'cu1606', 'cu1517']);
     res.end(json);
@@ -30,4 +30,4 @@ router.get('/engines/cpuusage', (req, res) => {
   res.end(json);
 });
 
-export default router;
+export {router}; 

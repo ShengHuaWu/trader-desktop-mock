@@ -1,11 +1,9 @@
-// TODO: Where to put 'use strick'?
-
 import express from 'express';
-import routes from './routes.js';
+import {router} from './routes.js';
 
 let app = express();
 
-app.use('/trader/desktop', routes);
+app.use('/trader/desktop', router);
 
 // Error Handling
 app.use((req, res, next) => {
@@ -24,4 +22,4 @@ if (app.get('env') === 'development') {
   });
 }
 
-export default app;
+export {app}; // The "{}" is necessary.
