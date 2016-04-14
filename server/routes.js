@@ -2,18 +2,23 @@ import express from 'express';
 
 const router = express.Router();
 
-router.get('/symbols/fuzzyquery', (req, res) => {
-  res.writeHeader(200, {'Content-Type' : 'application/json'}); // TODO: Use middleware to handle headers.
-  if (req.query.symbol === 'cu') {
-    let json = JSON.stringify(['cu1611', 'cu1606', 'cu1517']);
-    res.end(json);
+router.post('/auth/login', (req, res) => {
+  if (req.body.id === 'laphone' && req.body.pass === 'laphone') {
+    res.status(200).json({'accountId' : req.body.id});
   } else {
-    res.end(JSON.stringify([]));
+    res.status(401).json({'errorcd' : 1, 'errormsg' : 'You are NOT Laphone.'});
+  }
+});
+
+router.get('/symbols/fuzzyquery', (req, res) => {
+  if (req.query.symbol === 'cu') {
+    res.status(200).json(['cu1611', 'cu1606', 'cu1517']);
+  } else {
+    res.status(200).json([]);
   }
 });
 
 router.get('/engines/cpuusage', (req, res) => {
-  res.writeHeader(200, {'Content-Type' : 'application/json'});
   let engines = [
     {
       'eid' : '5566',
@@ -26,8 +31,7 @@ router.get('/engines/cpuusage', (req, res) => {
       'msg' : 'Never run'
     }
   ];
-  let json = JSON.stringify(engines);
-  res.end(json);
+  res.status(200).json(engines);
 });
 
-export {router}; 
+export {router};

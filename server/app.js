@@ -1,8 +1,20 @@
 import express from 'express';
+import bodyParser from 'body-parser'
 import {router} from './routes.js';
 
 let app = express();
 
+// Parse request body
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Insert response http header in middleware
+app.use('/trader/desktop', (req, res, next) => {
+  res.set('Content-Type', 'application/json');
+  next();
+});
+
+// Set router
 app.use('/trader/desktop', router);
 
 // Error Handling
