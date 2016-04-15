@@ -3,9 +3,9 @@ import express from 'express';
 const router = express.Router();
 
 const accountId = 'laphone';
-const engineId = '5566';
-const modelId = '55';
-const configId = '484';
+const engineId = 5566;
+const modelId = 55;
+const configId = 484;
 
 // Auth
 router.post('/auth/login', (req, res) => {
@@ -108,7 +108,7 @@ router.get('/models', (req, res) => {
 });
 
 router.get('/models/symbols', (req, res) => {
-  if (req.query.eid === engineId && req.query.modelId === modelId) {
+  if (req.query.eid == engineId && req.query.modelId == modelId) {
     res.status(200).json([ 'cu1611', 'cu1606', 'cu1517' ]);
   } else {
     res.status(200).json([]);
@@ -116,21 +116,21 @@ router.get('/models/symbols', (req, res) => {
 });
 
 router.get('/models/pnl', (req, res) => {
-  if (req.query.eid === engineId && req.query.modelId === modelId) {
+  if (req.query.eid == engineId && req.query.modelId == modelId) {
     const pnl = {
-      'modelId' : '47',
+      'modelId' : modelId,
       'floatingPnl' : 0,
       'closePnl' : 0,
       'commission' : 0
     };
     res.status(200).json(pnl);
   } else {
-    res.status(200).json({});
+    res.status(400).json({ 'errorCode' : 500, 'errorMsg' : 'Query model pnl failed.' });
   }
 });
 
 router.get('/models/blotter', (req, res) => {
-  if (req.query.eid === engineId && req.query.modelId === modelId) {
+  if (req.query.eid == engineId && req.query.modelId == modelId) {
     const blotters = [
       {
         'sqn' : 'abc',
@@ -267,7 +267,7 @@ router.delete('/models/config', (req, res) => {
 
 // Commands
 router.get('/commands', (req, res) => {
-  if (req.query.eid === engineId && req.query.modelId === modelId) {
+  if (req.query.eid == engineId && req.query.modelId == modelId) {
     const commands = [
       {
         'command' : 'fill',
@@ -282,7 +282,7 @@ router.get('/commands', (req, res) => {
 });
 
 router.post('/commands', (req, res) => {
-  if (typeof req.body.eid === engineId && req.body.modelId === modelId) {
+  if (req.body.eid == engineId && req.body.modelId == modelId) {
     res.status(200).end();
   } else {
     res.status(400).json({ 'errorCode' : 201, 'errorMsg' : 'Send command failed.' });
@@ -290,7 +290,7 @@ router.post('/commands', (req, res) => {
 });
 
 router.post('/commands/models/enable', (req, res) => {
-  if (typeof req.body.eid === engineId && req.body.modelId === modelId) {
+  if (req.body.eid == engineId && req.body.modelId == modelId) {
     res.status(200).end();
   } else {
     res.status(400).json({ 'errorCode' : 101, 'errorMsg' : 'Enable model failed.' });
@@ -298,7 +298,7 @@ router.post('/commands/models/enable', (req, res) => {
 });
 
 router.post('/commands/models/disable', (req, res) => {
-  if (typeof req.body.eid === engineId && req.body.modelId === modelId) {
+  if (req.body.eid == engineId && req.body.modelId == modelId) {
     res.status(200).end();
   } else {
     res.status(400).json({ 'errorCode' : 102, 'errorMsg' : 'Disable model failed.' });
@@ -307,7 +307,7 @@ router.post('/commands/models/disable', (req, res) => {
 
 // Order
 router.post('/order', (req, res) => {
-  if (typeof req.body.eid === engineId && req.body.modelId === modelId) {
+  if (req.body.eid == engineId && req.body.modelId == modelId) {
     res.status(200).end();
   } else {
     res.status(400).json({ 'errorCode' : 800, 'errorMsg' : 'Send order failed.' });
