@@ -1,5 +1,5 @@
 import express from 'express';
-import {accountId} from '../constants.js';
+import {accountId} from '../../constants.js';
 
 const accounts = express.Router();
 

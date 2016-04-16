@@ -1,5 +1,5 @@
 import express from 'express';
-import {engineId, modelId} from '../constants.js';
+import {engineId, modelId} from '../../constants.js';
 
 const commands = express.Router();
 

@@ -1,13 +1,13 @@
 import express from 'express';
 import bodyParser from 'body-parser'
-import {auth} from './auth.js';
-import {symbols} from './symbols.js';
-import {engines} from './engines.js';
-import {accounts} from './accounts.js';
-import {models} from './models.js';
-import {commands} from './commands.js';
-import {order} from './order.js';
-import {other} from './other.js';
+import {auth} from './routers/auth.js';
+import {symbols} from './routers/symbols.js';
+import {engines} from './routers/engines.js';
+import {accounts} from './routers/accounts.js';
+import {models} from './routers/models.js';
+import {commands} from './routers/commands.js';
+import {order} from './routers/order.js';
+import {other} from './routers/other.js';
 
 const app = express();
 
