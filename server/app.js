@@ -1,6 +1,13 @@
 import express from 'express';
 import bodyParser from 'body-parser'
-import {router} from './routes.js';
+import {auth} from './auth.js';
+import {symbols} from './symbols.js';
+import {engines} from './engines.js';
+import {accounts} from './accounts.js';
+import {models} from './models.js';
+import {commands} from './commands.js';
+import {order} from './order.js';
+import {other} from './other.js';
 
 const app = express();
 
@@ -14,8 +21,15 @@ app.use('/trader/desktop', (req, res, next) => {
   next();
 });
 
-// Set router
-app.use('/trader/desktop', router);
+// Set routers
+app.use('/trader/desktop/auth', auth);
+app.use('/trader/desktop/symbols', symbols);
+app.use('/trader/desktop/engines', engines);
+app.use('/trader/desktop/accounts', accounts);
+app.use('/trader/desktop/models', models);
+app.use('/trader/desktop/commands', commands);
+app.use('/trader/desktop/order', order);
+app.use('/trader/desktop', other);
 
 // Error Handling
 app.use((req, res, next) => {
