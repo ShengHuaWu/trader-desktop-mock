@@ -48,4 +48,6 @@ if (app.get('env') === 'development') {
   });
 }
 
-export {app}; // The "{}" is necessary.
+app.listen(3000, () => {
+  console.log('Listening on port 3000');
+});

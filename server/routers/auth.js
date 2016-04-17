@@ -19,4 +19,5 @@ auth.get('/islogin', (req, res) => {
   res.status(200).end();
 });
 
+// "{}" is necessary. Otherwise, write `export const auth = express.Router();`
 export {auth};
