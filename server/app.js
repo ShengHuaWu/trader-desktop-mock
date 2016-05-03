@@ -10,6 +10,7 @@ import {models} from './routers/models.js';
 import {commands} from './routers/commands.js';
 import {order} from './routers/order.js';
 import {other} from './routers/other.js';
+import {Frame} from './stomp/frame.js';
 
 const app = express();
 
@@ -63,26 +64,14 @@ wsServer.on('request', (req) => {
 
   conn.on('message', (message) => {
     if (message.type === 'utf8') {
-      let components = message.utf8Data.slice(2, -2).split('\\n'); // Use \\n instead of \n.
-      const command = components.shift();
-      console.log(command);
-      if (command === 'CONNECT') {
-        const frame = JSON.stringify(['CONNECTED\nheart-beat:0,0\nversion:1.1\n\n\0'])
-        conn.send(`a${frame}`);
-      } else if (command === 'SUBSCRIBE') {
-        var headers = {};
-        components.filter((component) => {
-          return component.indexOf(':') > -1
-        }).map((filteredComponent) => {
-          const parts = filteredComponent.split(':');
-          headers[parts[0]] = parts[1];
-        });
-        const destination = headers['destination'].replace(/\\/g, '');
+      const frame = Frame.parseMessage(message);
+      if (frame.command === 'CONNECT') {
+        conn.send(Frame.connectedFrame().toString());
+      } else if (frame.command === 'SUBSCRIBE') {
+        const destination = frame.headers['destination'];
         if (destination === '/account/modelinfo/laphone') {
-          const bodyString = JSON.stringify({'eid' : 5566, 'modelId' : 52, 'modelName' : 'laphone model'});
-          const message = `MESSAGE\ndestination:/account/modelinfo/laphone\nsubscription:sub-0\nmessage-id:1234\ncontent-lebgth:0\n\n${bodyString}\n\0`;
-          const frame = JSON.stringify([message]);
-          conn.send(`a${frame}`);
+          const object = {'eid' : 5566, 'modelId' : 52, 'modelName' : 'laphone model'};
+          conn.send(Frame.messageFrame(destination, object));
         }
       }
     }
