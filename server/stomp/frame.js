@@ -39,7 +39,7 @@ class Frame {
     frame.headers['destination'] = destination;
     frame.headers['subscription'] = 'sub-0';
     frame.headers['message-id'] = '1234';
-    frame.headers['content-lebgth'] = '0';
+    frame.headers['content-length'] = '0';
     return frame;
   }
 
