@@ -1,13 +1,18 @@
 import {server as WebsocketServer} from 'websocket';
 import {Frame} from './frame.js';
-import {accountId, engineId, modelId} from '../../constants.js';
+import {ModelInfo} from './model-info.js';
+import {Blotter} from './blotter.js';
+import {modelInfoDestination, blotterDestination} from '../../constants.js';
 
 class StompServer {
   // Initializers
   constructor(server) {
     const wsServer = new WebsocketServer({ httpServer: server, path: '/traderdesktop' });
     wsServer.on('request', (req) => {
-      var conn = req.accept(null, req.origin);
+      const conn = req.accept(null, req.origin);
+      let routers = {};
+      routers[modelInfoDestination] = new ModelInfo(conn, modelInfoDestination);
+      routers[blotterDestination] = new Blotter(conn, blotterDestination);
       conn.send('o');
 
       conn.on('message', (message) => {
@@ -20,13 +25,7 @@ class StompServer {
           conn.send(Frame.connectedFrame().toString());
         } else if (frame.command === 'SUBSCRIBE') {
           const destination = frame.headers['destination'];
-          if (destination === `/account/modelinfo/${accountId}`) {
-            const object = {'eid' : 5566, 'modelId' : 52, 'modelName' : 'laphone model'};
-            conn.send(Frame.messageFrame(destination, object).toString());
-          } else if (destination === `/engine/blotter/${engineId}/${modelId}`) {
-            const object = [{'sqn' : 0, 'symbol' : 'ni1609', 'qty' : 1, 'pnl' : 87.0}];
-            conn.send(Frame.messageFrame(destination, object).toString());
-          }
+          routers[destination].send();
         }
       });
 
@@ -34,7 +33,7 @@ class StompServer {
         console.log('disconnected');
       });
     });
-  }  
+  }
 }
 
 export {StompServer};
