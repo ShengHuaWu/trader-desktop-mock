@@ -1,7 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import http from 'http';
-import {server as WebsocketServer} from 'websocket';
 import {auth} from './routers/auth.js';
 import {symbols} from './routers/symbols.js';
 import {engines} from './routers/engines.js';
@@ -10,7 +9,7 @@ import {models} from './routers/models.js';
 import {commands} from './routers/commands.js';
 import {order} from './routers/order.js';
 import {other} from './routers/other.js';
-import {Frame} from './stomp/frame.js';
+import {StompServer} from './stomp/server.js';
 
 const app = express();
 
@@ -52,32 +51,7 @@ if (app.get('env') === 'development') {
 }
 
 const server = http.createServer(app);
-server.listen(3000, ()=> {
+const stompServer = new StompServer(server);
+server.listen(3000, () => {
   console.log('Listening on port 3000');
-});
-
-// Websocket
-const wsServer = new WebsocketServer({ httpServer: server, path: '/traderdesktop' });
-wsServer.on('request', (req) => {
-  var conn = req.accept(null, req.origin);
-  conn.send('o');
-
-  conn.on('message', (message) => {
-    if (message.type === 'utf8') {
-      const frame = Frame.parseMessage(message);
-      if (frame.command === 'CONNECT') {
-        conn.send(Frame.connectedFrame().toString());
-      } else if (frame.command === 'SUBSCRIBE') {
-        const destination = frame.headers['destination'];
-        if (destination === '/account/modelinfo/laphone') {
-          const object = {'eid' : 5566, 'modelId' : 52, 'modelName' : 'laphone model'};
-          conn.send(Frame.messageFrame(destination, object));
-        }
-      }
-    }
-  });
-
-  conn.on('close', (reasonCode, description) => {
-    console.log('disconnected');
-  });
 });
