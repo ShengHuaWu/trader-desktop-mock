@@ -1,18 +1,13 @@
 import {server as WebsocketServer} from 'websocket';
 import {Frame} from './frame.js';
-import {ModelInfo} from './model-info.js';
-import {Blotter} from './blotter.js';
-import {modelInfoDestination, blotterDestination} from '../../constants.js';
 
 class StompServer {
   // Initializers
-  constructor(server) {
-    const wsServer = new WebsocketServer({ httpServer: server, path: '/traderdesktop' });
+  constructor(server, path) {
+    this.routers = {};
+    const wsServer = new WebsocketServer({ httpServer: server, path: path });
     wsServer.on('request', (req) => {
       const conn = req.accept(null, req.origin);
-      let routers = {};
-      routers[modelInfoDestination] = new ModelInfo(conn, modelInfoDestination);
-      routers[blotterDestination] = new Blotter(conn, blotterDestination);
       conn.send('o');
 
       conn.on('message', (message) => {
@@ -24,8 +19,7 @@ class StompServer {
         if (frame.command === 'CONNECT') {
           conn.send(Frame.connectedFrame().toString());
         } else if (frame.command === 'SUBSCRIBE') {
-          const destination = frame.headers['destination'];
-          routers[destination].send();
+          this.navigate(conn, frame.headers['destination']);
         }
       });
 
@@ -33,6 +27,22 @@ class StompServer {
         console.log('disconnected');
       });
     });
+  }
+
+  add(destinationPrefix, handler) {
+    this.routers[destinationPrefix] = handler;
+  }
+
+  navigate(conn, destination) {
+    const handler = Object.keys(this.routers).filter((key) => {
+      return destination.startsWith(key);
+    }).map((key) => {
+      return this.routers[key];
+    }).shift();
+
+    if (typeof handler == 'function') {
+      handler(conn, destination);
+    }
   }
 }
 

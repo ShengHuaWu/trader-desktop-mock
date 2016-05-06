@@ -1,16 +1,9 @@
 import {Frame} from './frame.js';
+import {engineId, modelId, modelName} from '../../constants.js';
 
-class ModelInfo {
-  // Initializers
-  constructor(conn, destination) {
-    this.conn = conn;
-    this.destination = destination;
-  }
+const modelInfo = (conn, destination) => {
+  const object = {'eid' : engineId, 'modelId' : modelId, 'modelName' : modelName};
+  conn.send(Frame.messageFrame(destination, object));
+};
 
-  send() {
-    const object = {'eid' : 5566, 'modelId' : 52, 'modelName' : 'laphone model'};
-    this.conn.send(Frame.messageFrame(this.destination, object));
-  }
-}
-
-export {ModelInfo};
+export {modelInfo};

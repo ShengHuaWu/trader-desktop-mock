@@ -10,6 +10,8 @@ import {commands} from './routers/commands.js';
 import {order} from './routers/order.js';
 import {other} from './routers/other.js';
 import {StompServer} from './stomp/server.js';
+import {modelInfo} from './stomp/model-info.js';
+import {blotter} from './stomp/blotter.js';
 
 const app = express();
 
@@ -50,8 +52,12 @@ if (app.get('env') === 'development') {
   });
 }
 
+// Stomp over Websocket
 const server = http.createServer(app);
-const stompServer = new StompServer(server);
+const stompServer = new StompServer(server, '/traderdesktop');
+stompServer.add('/account/modelinfo', modelInfo);
+stompServer.add('/engine/blotter', blotter);
+
 server.listen(3000, () => {
   console.log('Listening on port 3000');
 });
